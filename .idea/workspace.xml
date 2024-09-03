@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df0e0842-8a9e-4451-bd70-2d1a36f6f5ee" name="Changes" comment="Finalização dos Exercícios ainda sem testes!">
+    <list default="true" id="df0e0842-8a9e-4451-bd70-2d1a36f6f5ee" name="Changes" comment="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +60,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1725400832244</updated>
-      <workItem from="1725400834747" duration="2530000" />
+      <workItem from="1725400834747" duration="3519000" />
     </task>
     <task id="LOCAL-00001" summary="Finalização dos Exercícios ainda sem testes!">
       <option name="closed" value="true" />
@@ -77,7 +78,23 @@
       <option name="project" value="LOCAL" />
       <updated>1725403173226</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!">
+      <option name="closed" value="true" />
+      <created>1725403596832</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1725403596832</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!">
+      <option name="closed" value="true" />
+      <created>1725403655097</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1725403655097</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -85,6 +102,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Finalização dos Exercícios ainda sem testes!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finalização dos Exercícios ainda sem testes!" />
+    <MESSAGE value="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!" />
   </component>
 </project>

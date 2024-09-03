@@ -9,8 +9,6 @@ import pydeck as pdk
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-#Exercício 2
-st.markdown("**Gráfico de Barras: Evolução Semanal dos Casos Novos de COVID-19 em São Paulo**")
 
 # Carregar o arquivo CSV com o delimitador correto
 file_path = r'D:\Faculdade\2 Semestre\Python + Front\TP2\HIST_PAINEL_COVIDBR_2020_Parte1_30ago2024.csv'
@@ -19,266 +17,171 @@ data = pd.read_csv(file_path, sep=';', on_bad_lines='skip')
 # Verificar os nomes das colunas
 st.write(data.columns)
 
+#________________________________________________________________________________________________________________________
+# Exercício 2
+
+st.markdown("**Gráfico de Barras: Evolução Semanal dos Casos Novos de COVID-19 em São Paulo**")
 estado = 'SP'
 dados_estado = data[data['estado'] == estado]
-
-dados_agrupados = dados_estado.groupby('semana_epidemiologica')['casos_novos'].sum().reset_index()
+dados_agrupados = dados_estado.groupby('semanaEpi')['casosNovos'].sum().reset_index()
 
 plt.figure(figsize=(10, 6))
-plt.bar(dados_agrupados['semana_epidemiologica'], dados_agrupados['casos_novos'], color='skyblue')
+plt.bar(dados_agrupados['semanaEpi'], dados_agrupados['casosNovos'], color='skyblue')
 plt.xlabel('Semana Epidemiológica')
 plt.ylabel('Casos Novos')
 plt.title(f'Evolução Semanal dos Casos Novos de COVID-19 em {estado}')
 plt.xticks(rotation=45)
-
 st.pyplot(plt)
-
 st.markdown("_____")
 
-#______________________________________________________________________________________________________________________
-#Exercício 3
+#________________________________________________________________________________________________________________________
+# Exercício 3
 
-# Título
 st.markdown("**Gráfico de Linha: Óbitos Acumulados por COVID-19 ao Longo das Semanas Epidemiológicas no Brasil**")
+dados_brasil = data.groupby('semanaEpi')['obitosNovos'].sum().reset_index()
+dados_brasil['obitos_acumulados'] = dados_brasil['obitosNovos'].cumsum()
 
-# Filtrando e preparando os dados para o Brasil
-dados_brasil = data.groupby('semana_epidemiologica')['obitos'].sum().reset_index()
-dados_brasil['obitos_acumulados'] = dados_brasil['obitos'].cumsum()
-
-# Criando o gráfico de linha
 plt.figure(figsize=(10, 6))
-plt.plot(dados_brasil['semana_epidemiologica'], dados_brasil['obitos_acumulados'], marker='o', linestyle='-')
+plt.plot(dados_brasil['semanaEpi'], dados_brasil['obitos_acumulados'], marker='o', linestyle='-')
 plt.xlabel('Semana Epidemiológica')
 plt.ylabel('Óbitos Acumulados')
 plt.title('Óbitos Acumulados por COVID-19 no Brasil ao Longo das Semanas Epidemiológicas')
 plt.xticks(rotation=45)
-
-# Exibindo o gráfico no Streamlit
 st.pyplot(plt)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
 
-#______________________________________________________________________________________________________________________
-#Exercício 4
+#________________________________________________________________________________________________________________________
+# Exercício 4
 
-# Título
 st.markdown("**Gráfico de Área: Comparação da Evolução dos Casos Acumulados de COVID-19 em SP, RJ e MG**")
-
-# Escolhendo três estados para comparação
 estados = ['SP', 'RJ', 'MG']
-
-# Filtrando dados para os três estados
 dados_estados = data[data['estado'].isin(estados)]
+dados_agrupados = dados_estados.groupby(['estado', 'semanaEpi'])['casosAcumulado'].sum().reset_index()
 
-# Agrupando por estado e semana epidemiológica
-dados_agrupados = dados_estados.groupby(['estado', 'semana_epidemiologica'])['casos_acumulados'].sum().reset_index()
-
-# Preparando os dados para o gráfico de área
 plt.figure(figsize=(10, 6))
-
 for estado in estados:
     dados_estado = dados_agrupados[dados_agrupados['estado'] == estado]
-    plt.fill_between(dados_estado['semana_epidemiologica'], dados_estado['casos_acumulados'], alpha=0.5, label=estado)
+    plt.fill_between(dados_estado['semanaEpi'], dados_estado['casosAcumulado'], alpha=0.5, label=estado)
 
 plt.xlabel('Semana Epidemiológica')
 plt.ylabel('Casos Acumulados')
 plt.title('Evolução dos Casos Acumulados de COVID-19 em SP, RJ e MG')
 plt.legend(title='Estado')
 plt.xticks(rotation=45)
-
-# Exibindo o gráfico no Streamlit
 st.pyplot(plt)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
 
+#________________________________________________________________________________________________________________________
+# Exercício 5
 
-#______________________________________________________________________________________________________________________
-#Exercício 5
-
-# Título
 st.markdown("**Mapa Interativo: Distribuição dos Casos Acumulados de COVID-19 por Município em São Paulo (SP)**")
 
-# Filtrando dados para o estado de São Paulo
 estado_escolhido = 'SP'
 dados_municipios_sp = data[data['estado'] == estado_escolhido]
 
-# Selecionando apenas as colunas necessárias (latitude, longitude e casos acumulados)
-dados_mapa = dados_municipios_sp[['municipio', 'casos_acumulados', 'latitude', 'longitude']].dropna()
+# Criando um dicionário de coordenadas de alguns municípios de São Paulo para exemplo
+coordenadas_sp = {
+    'São Paulo': {'lat': -23.55052, 'long': -46.633308},
+    'Campinas': {'lat': -22.90556, 'long': -47.06083},
+    'Santos': {'lat': -23.96083, 'long': -46.33361},
+    'São José dos Campos': {'lat': -23.1896, 'long': -45.8841},
+    'Sorocaba': {'lat': -23.5015, 'long': -47.4526}
+}
+
+# Adicionando as coordenadas ao DataFrame
+dados_municipios_sp['lat'] = dados_municipios_sp['municipio'].map(lambda x: coordenadas_sp[x]['lat'] if x in coordenadas_sp else None)
+dados_municipios_sp['long'] = dados_municipios_sp['municipio'].map(lambda x: coordenadas_sp[x]['long'] if x in coordenadas_sp else None)
+
+# Removendo linhas sem coordenadas
+dados_mapa_sp = dados_municipios_sp.dropna(subset=['lat', 'long'])
 
 # Exibindo o mapa interativo
-st.map(dados_mapa)
-
-# Linha para finalizar o exercício
+st.map(dados_mapa_sp)
 st.markdown("_____")
 
+#________________________________________________________________________________________________________________________
+# Exercício 6
 
-#______________________________________________________________________________________________________________________
-#Exercício 6
-
-# Título
 st.markdown("**Gráfico de Barras: Comparação entre Casos Novos e Óbitos Novos de COVID-19 por Estado na Semana Epidemiológica Mais Recente**")
+semana_recente = data['semanaEpi'].max()
+dados_semana_recente = data[data['semanaEpi'] == semana_recente]
+dados_por_estado = dados_semana_recente.groupby('estado')[['casosNovos', 'obitosNovos']].sum().reset_index()
 
-# Encontrando a semana epidemiológica mais recente
-semana_recente = data['semana_epidemiologica'].max()
-
-# Filtrando dados para a semana mais recente
-dados_semana_recente = data[data['semana_epidemiologica'] == semana_recente]
-
-# Agrupando os dados por estado para calcular casos e óbitos novos
-dados_por_estado = dados_semana_recente.groupby('estado')[['casos_novos', 'obitos_novos']].sum().reset_index()
-
-# Criando o gráfico de barras
 fig, ax = plt.subplots(figsize=(12, 6))
 bar_width = 0.4
 indices = range(len(dados_por_estado))
+ax.bar(indices, dados_por_estado['casosNovos'], width=bar_width, label='Casos Novos', color='skyblue')
+ax.bar([i + bar_width for i in indices], dados_por_estado['obitosNovos'], width=bar_width, label='Óbitos Novos', color='salmon')
 
-ax.bar(indices, dados_por_estado['casos_novos'], width=bar_width, label='Casos Novos', color='skyblue')
-ax.bar([i + bar_width for i in indices], dados_por_estado['obitos_novos'], width=bar_width, label='Óbitos Novos', color='salmon')
-
-# Configurando o gráfico
 ax.set_xlabel('Estado')
 ax.set_ylabel('Número de Casos/Óbitos')
 ax.set_title('Casos Novos vs Óbitos Novos de COVID-19 por Estado na Semana Epidemiológica Mais Recente')
 ax.set_xticks([i + bar_width / 2 for i in indices])
 ax.set_xticklabels(dados_por_estado['estado'], rotation=45)
 ax.legend()
-
-# Exibindo o gráfico no Streamlit
 st.pyplot(fig)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
 
+#________________________________________________________________________________________________________________________
+# Exercício 7
 
-#______________________________________________________________________________________________________________________
-#Exercício 7
-
-# Título
 st.markdown("**Boxplot: Distribuição dos Casos Novos de COVID-19 por Semana Epidemiológica nas Regiões Norte, Nordeste e Sudeste**")
-
-# Criando um mapeamento de estados para regiões
 regioes = {
     'Norte': ['AC', 'AP', 'AM', 'PA', 'RO', 'RR', 'TO'],
     'Nordeste': ['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'SE'],
     'Sudeste': ['ES', 'MG', 'RJ', 'SP']
 }
-
-# Adicionando a coluna de região aos dados
 data['regiao'] = data['estado'].map(lambda x: next((regiao for regiao, estados in regioes.items() if x in estados), None))
-
-# Filtrando dados para as três regiões selecionadas
 dados_regioes = data[data['regiao'].isin(['Norte', 'Nordeste', 'Sudeste'])]
 
-# Criando o boxplot com Seaborn
 plt.figure(figsize=(12, 6))
-sns.boxplot(x='semana_epidemiologica', y='casos_novos', hue='regiao', data=dados_regioes, palette='Set2')
-
+sns.boxplot(x='semanaEpi', y='casosNovos', hue='regiao', data=dados_regioes, palette='Set2')
 plt.xlabel('Semana Epidemiológica')
 plt.ylabel('Casos Novos')
 plt.title('Distribuição dos Casos Novos de COVID-19 por Semana Epidemiológica nas Regiões Norte, Nordeste e Sudeste')
 plt.xticks(rotation=45)
-
-# Exibindo o gráfico no Streamlit
 st.pyplot(plt)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
 
-#______________________________________________________________________________________________________________________
-#Exercício 8
+#________________________________________________________________________________________________________________________
+# Exercício 8
 
-# Título
 st.markdown("**Gráfico de Área: Evolução dos Casos Novos de COVID-19 por Semana Epidemiológica na Região Nordeste**")
-
-# Filtrando dados para a Região Nordeste
 regiao_escolhida = 'Nordeste'
 dados_nordeste = data[data['regiao'] == regiao_escolhida]
+dados_agrupados = dados_nordeste.groupby('semanaEpi')['casosNovos'].sum().reset_index()
 
-# Agrupando os dados por semana epidemiológica
-dados_agrupados = dados_nordeste.groupby('semana_epidemiologica')['casos_novos'].sum().reset_index()
-
-# Criando o gráfico de área com Altair
-grafico_area = alt.Chart(dados_agrupados).mark_area(opacity=0.5).encode(
-    x='semana_epidemiologica:O',
-    y='casos_novos:Q',
-    tooltip=['semana_epidemiologica', 'casos_novos']
-).properties(
-    title='Evolução dos Casos Novos de COVID-19 na Região Nordeste por Semana Epidemiológica',
-    width=600,
-    height=400
-)
-
-# Exibindo o gráfico no Streamlit
-st.altair_chart(grafico_area)
-
-# Linha para finalizar o exercício
+grafico_area = px.area(dados_agrupados, x='semanaEpi', y='casosNovos', title='Evolução dos Casos Novos de COVID-19 na Região Nordeste')
+st.plotly_chart(grafico_area)
 st.markdown("_____")
 
-#______________________________________________________________________________________________________________________
-#Exercício 9
+#________________________________________________________________________________________________________________________
+# Exercício 9
 
-# Título
 st.markdown("**Heatmap: Correlação entre Casos Novos, Óbitos Novos e Leitos Ocupados em São Paulo (SP)**")
-
-# Filtrando dados para o estado de São Paulo
 estado_escolhido = 'SP'
 dados_sp = data[data['estado'] == estado_escolhido]
+dados_correlação = dados_sp[['casosNovos', 'obitosNovos', 'Recuperadosnovos']].dropna()
 
-# Selecionando as colunas relevantes para a correlação
-# Certifique-se de que a coluna 'leitos_ocupados' esteja presente nos dados
-dados_correlação = dados_sp[['casos_novos', 'obitos_novos', 'leitos_ocupados']].dropna()
-
-# Calculando a correlação entre os dados
 correlacao = dados_correlação.corr().reset_index().melt('index')
-
-# Renomeando as colunas para a construção do heatmap
 correlacao.columns = ['Variável 1', 'Variável 2', 'Correlação']
 
-# Criando o heatmap com Altair
-heatmap = alt.Chart(correlacao).mark_rect().encode(
-    x='Variável 1:O',
-    y='Variável 2:O',
-    color=alt.Color('Correlação:Q', scale=alt.Scale(scheme='viridis')),
-    tooltip=['Variável 1', 'Variável 2', 'Correlação']
-).properties(
-    title='Correlação entre Casos Novos, Óbitos Novos e Leitos Ocupados em São Paulo (SP)',
-    width=400,
-    height=400
-)
-
-# Exibindo o heatmap no Streamlit
-st.altair_chart(heatmap)
-
-# Linha para finalizar o exercício
+heatmap = px.density_heatmap(correlacao, x='Variável 1', y='Variável 2', z='Correlação', color_continuous_scale='viridis')
+st.plotly_chart(heatmap)
 st.markdown("_____")
 
+#________________________________________________________________________________________________________________________
+# Exercício 10
 
-#______________________________________________________________________________________________________________________
-#Exercício 10
-
-# Título
 st.markdown("**Gráfico de Pizza: Distribuição Percentual dos Casos Acumulados de COVID-19 entre as Regiões do Brasil**")
-
-# Agrupando dados por região para calcular o total de casos acumulados
-dados_por_regiao = data.groupby('regiao')['casos_acumulados'].sum().reset_index()
-
-# Criando o gráfico de pizza com Plotly
-fig = px.pie(dados_por_regiao, values='casos_acumulados', names='regiao',
-             title='Distribuição Percentual dos Casos Acumulados de COVID-19 por Região',
-             color_discrete_sequence=px.colors.sequential.Viridis)
-
-# Exibindo o gráfico no Streamlit
+dados_por_regiao = data.groupby('regiao')['casosAcumulado'].sum().reset_index()
+fig = px.pie(dados_por_regiao, values='casosAcumulado', names='regiao', title='Distribuição Percentual dos Casos Acumulados de COVID-19 por Região')
 st.plotly_chart(fig)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
 
-#______________________________________________________________________________________________________________________
-#Exercício 11
+#________________________________________________________________________________________________________________________
+# Exercício 11
 
-# Título
 st.markdown("**Subplots: Comparação dos Casos Novos e Óbitos Novos de COVID-19 por Semana Epidemiológica nas Regiões Sudeste e Nordeste**")
 
 # Filtrando dados para as regiões escolhidas
@@ -286,7 +189,7 @@ regioes_comparacao = ['Sudeste', 'Nordeste']
 dados_comparacao = data[data['regiao'].isin(regioes_comparacao)]
 
 # Agrupando dados por região e semana epidemiológica
-dados_agrupados = dados_comparacao.groupby(['regiao', 'semana_epidemiologica'])[['casos_novos', 'obitos_novos']].sum().reset_index()
+dados_agrupados = dados_comparacao.groupby(['regiao', 'semanaEpi'])[['casosNovos', 'obitosNovos']].sum().reset_index()
 
 # Criando subplots com Plotly
 fig = make_subplots(rows=1, cols=2, subplot_titles=('Sudeste', 'Nordeste'))
@@ -294,60 +197,72 @@ fig = make_subplots(rows=1, cols=2, subplot_titles=('Sudeste', 'Nordeste'))
 # Adicionando gráficos de barras para a Região Sudeste
 dados_sudeste = dados_agrupados[dados_agrupados['regiao'] == 'Sudeste']
 fig.add_trace(
-    go.Bar(x=dados_sudeste['semana_epidemiologica'], y=dados_sudeste['casos_novos'], name='Casos Novos - Sudeste', marker_color='blue'),
+    go.Bar(x=dados_sudeste['semanaEpi'], y=dados_sudeste['casosNovos'], name='Casos Novos - Sudeste', marker_color='blue'),
     row=1, col=1
 )
 fig.add_trace(
-    go.Bar(x=dados_sudeste['semana_epidemiologica'], y=dados_sudeste['obitos_novos'], name='Óbitos Novos - Sudeste', marker_color='red'),
+    go.Bar(x=dados_sudeste['semanaEpi'], y=dados_sudeste['obitosNovos'], name='Óbitos Novos - Sudeste', marker_color='red'),
     row=1, col=1
 )
 
 # Adicionando gráficos de barras para a Região Nordeste
 dados_nordeste = dados_agrupados[dados_agrupados['regiao'] == 'Nordeste']
 fig.add_trace(
-    go.Bar(x=dados_nordeste['semana_epidemiologica'], y=dados_nordeste['casos_novos'], name='Casos Novos - Nordeste', marker_color='blue'),
+    go.Bar(x=dados_nordeste['semanaEpi'], y=dados_nordeste['casosNovos'], name='Casos Novos - Nordeste', marker_color='blue'),
     row=1, col=2
 )
 fig.add_trace(
-    go.Bar(x=dados_nordeste['semana_epidemiologica'], y=dados_nordeste['obitos_novos'], name='Óbitos Novos - Nordeste', marker_color='red'),
+    go.Bar(x=dados_nordeste['semanaEpi'], y=dados_nordeste['obitosNovos'], name='Óbitos Novos - Nordeste', marker_color='red'),
     row=1, col=2
 )
 
 # Atualizando layout do gráfico
 fig.update_layout(
     title_text='Comparação dos Casos Novos e Óbitos Novos de COVID-19 por Semana Epidemiológica',
-    showlegend=False,
+    showlegend=True,
     width=1000,
     height=500
 )
 
 # Exibindo os subplots no Streamlit
 st.plotly_chart(fig)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
 
-#______________________________________________________________________________________________________________________
-#Exercício 12
 
-# Título para diferenciar o começo do exercício
+#_______________________________________________________________________________________________________________________
+# Exercício 12
+
+# Exercício 12
 st.markdown("**Mapa Interativo: Densidade Populacional Ajustada para Casos Acumulados de COVID-19 por Município na Região Sudeste**")
 
 # Filtrando dados para a Região Sudeste
 regiao_escolhida = 'Sudeste'
 dados_sudeste = data[data['regiao'] == regiao_escolhida]
 
-# Filtrando as colunas necessárias (municipio, casos acumulados, latitude, longitude e população)
-dados_mapa = dados_sudeste[['municipio', 'casos_acumulados', 'latitude', 'longitude', 'populacao']].dropna()
+# Criando um dicionário de coordenadas de alguns municípios da Região Sudeste para exemplo
+coordenadas_sudeste = {
+    'São Paulo': {'lat': -23.55052, 'long': -46.633308},
+    'Rio de Janeiro': {'lat': -22.906847, 'long': -43.172896},
+    'Belo Horizonte': {'lat': -19.916681, 'long': -43.934493},
+    'Campinas': {'lat': -22.90556, 'long': -47.06083},
+    'Vitória': {'lat': -20.3155, 'long': -40.3128}
+}
+
+# Adicionando as coordenadas ao DataFrame
+dados_sudeste['lat'] = dados_sudeste['municipio'].map(lambda x: coordenadas_sudeste[x]['lat'] if x in coordenadas_sudeste else None)
+dados_sudeste['long'] = dados_sudeste['municipio'].map(lambda x: coordenadas_sudeste[x]['long'] if x in coordenadas_sudeste else None)
+
+# Removendo linhas sem coordenadas
+dados_mapa = dados_sudeste.dropna(subset=['lat', 'long', 'populacaoTCU2019'])
 
 # Calculando casos ajustados por densidade populacional
-dados_mapa['casos_por_100k'] = (dados_mapa['casos_acumulados'] / dados_mapa['populacao']) * 100000
+dados_mapa['casos_por_100k'] = (dados_mapa['casosAcumulado'] / dados_mapa['populacaoTCU2019']) * 100000
 
 # Configurando o mapa com PyDeck
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=dados_mapa,
-    get_position='[longitude, latitude]',
+    get_position='[long, lat]',
     get_radius=1000,
     get_fill_color='[255, 0, 0, 140]',
     pickable=True,
@@ -356,8 +271,8 @@ layer = pdk.Layer(
 )
 
 view_state = pdk.ViewState(
-    latitude=dados_mapa['latitude'].mean(),
-    longitude=dados_mapa['longitude'].mean(),
+    latitude=dados_mapa['lat'].mean(),
+    longitude=dados_mapa['long'].mean(),
     zoom=6,
     pitch=40
 )
@@ -370,6 +285,6 @@ r = pdk.Deck(
 
 # Exibindo o mapa no Streamlit
 st.pydeck_chart(r)
-
-# Linha para finalizar o exercício
 st.markdown("_____")
+
+
