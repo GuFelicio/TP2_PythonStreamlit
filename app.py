@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 #Exercício 2
 st.markdown("**Gráfico de Barras: Evolução Semanal dos Casos Novos de COVID-19 em São Paulo**")
 
-data_url = 'D:\Faculdade\2 Semestre\Python + Front\TP2\HIST_PAINEL_COVIDBR_2020_Parte1_30ago2024.csv'
+data_url = 'D:\\Faculdade\\2 Semestre\\Python + Front\\TP2\\HIST_PAINEL_COVIDBR_2020_Parte1_30ago2024.csv'
 data = pd.read_csv(data_url)
 
 estado = 'SP'
