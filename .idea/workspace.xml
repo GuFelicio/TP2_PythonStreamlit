@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="df0e0842-8a9e-4451-bd70-2d1a36f6f5ee" name="Changes" comment="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-    </list>
+    <list default="true" id="df0e0842-8a9e-4451-bd70-2d1a36f6f5ee" name="Changes" comment="Commit final com tudo funcionando 100%!" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +57,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1725400832244</updated>
-      <workItem from="1725400834747" duration="4234000" />
+      <workItem from="1725400834747" duration="4551000" />
     </task>
     <task id="LOCAL-00001" summary="Finalização dos Exercícios ainda sem testes!">
       <option name="closed" value="true" />
@@ -102,7 +99,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725404403327</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Commit final com tudo funcionando 100%!">
+      <option name="closed" value="true" />
+      <created>1725405209227</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1725405209227</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -111,6 +116,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Finalização dos Exercícios ainda sem testes!" />
     <MESSAGE value="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Alteração para puxar o CSV com edição e conseguir fazer a leitura do CSV!" />
+    <MESSAGE value="Commit final com tudo funcionando 100%!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commit final com tudo funcionando 100%!" />
   </component>
 </project>
