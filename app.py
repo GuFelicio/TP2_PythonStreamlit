@@ -12,8 +12,12 @@ import plotly.graph_objects as go
 #Exercício 2
 st.markdown("**Gráfico de Barras: Evolução Semanal dos Casos Novos de COVID-19 em São Paulo**")
 
-data_url = 'D:\\Faculdade\\2 Semestre\\Python + Front\\TP2\\HIST_PAINEL_COVIDBR_2020_Parte1_30ago2024.csv'
-data = pd.read_csv(data_url)
+# Carregar o arquivo CSV com o delimitador correto
+file_path = '/mnt/data/HIST_PAINEL_COVIDBR_2020_Parte1_30ago2024.csv'
+data = pd.read_csv(file_path, sep=';', on_bad_lines='skip')
+
+# Verificar os nomes das colunas
+st.write(data.columns)
 
 estado = 'SP'
 dados_estado = data[data['estado'] == estado]
