@@ -92,12 +92,16 @@ coordenadas_sp = {
 dados_municipios_sp['lat'] = dados_municipios_sp['municipio'].map(lambda x: coordenadas_sp[x]['lat'] if x in coordenadas_sp else None)
 dados_municipios_sp['long'] = dados_municipios_sp['municipio'].map(lambda x: coordenadas_sp[x]['long'] if x in coordenadas_sp else None)
 
+# Renomeando colunas para 'latitude' e 'longitude'
+dados_municipios_sp = dados_municipios_sp.rename(columns={'lat': 'latitude', 'long': 'longitude'})
+
 # Removendo linhas sem coordenadas
-dados_mapa_sp = dados_municipios_sp.dropna(subset=['lat', 'long'])
+dados_mapa_sp = dados_municipios_sp.dropna(subset=['latitude', 'longitude'])
 
 # Exibindo o mapa interativo
 st.map(dados_mapa_sp)
 st.markdown("_____")
+
 
 #________________________________________________________________________________________________________________________
 # Exercício 6
@@ -232,7 +236,6 @@ st.markdown("_____")
 #_______________________________________________________________________________________________________________________
 # Exercício 12
 
-# Exercício 12
 st.markdown("**Mapa Interativo: Densidade Populacional Ajustada para Casos Acumulados de COVID-19 por Município na Região Sudeste**")
 
 # Filtrando dados para a Região Sudeste
@@ -252,8 +255,11 @@ coordenadas_sudeste = {
 dados_sudeste['lat'] = dados_sudeste['municipio'].map(lambda x: coordenadas_sudeste[x]['lat'] if x in coordenadas_sudeste else None)
 dados_sudeste['long'] = dados_sudeste['municipio'].map(lambda x: coordenadas_sudeste[x]['long'] if x in coordenadas_sudeste else None)
 
+# Renomeando colunas para 'latitude' e 'longitude'
+dados_sudeste = dados_sudeste.rename(columns={'lat': 'latitude', 'long': 'longitude'})
+
 # Removendo linhas sem coordenadas
-dados_mapa = dados_sudeste.dropna(subset=['lat', 'long', 'populacaoTCU2019'])
+dados_mapa = dados_sudeste.dropna(subset=['latitude', 'longitude', 'populacaoTCU2019'])
 
 # Calculando casos ajustados por densidade populacional
 dados_mapa['casos_por_100k'] = (dados_mapa['casosAcumulado'] / dados_mapa['populacaoTCU2019']) * 100000
@@ -262,7 +268,7 @@ dados_mapa['casos_por_100k'] = (dados_mapa['casosAcumulado'] / dados_mapa['popul
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=dados_mapa,
-    get_position='[long, lat]',
+    get_position='[longitude, latitude]',
     get_radius=1000,
     get_fill_color='[255, 0, 0, 140]',
     pickable=True,
@@ -271,8 +277,8 @@ layer = pdk.Layer(
 )
 
 view_state = pdk.ViewState(
-    latitude=dados_mapa['lat'].mean(),
-    longitude=dados_mapa['long'].mean(),
+    latitude=dados_mapa['latitude'].mean(),
+    longitude=dados_mapa['longitude'].mean(),
     zoom=6,
     pitch=40
 )
